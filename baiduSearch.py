@@ -2,7 +2,7 @@
 
 import urllib2 as url
 import urllib
-import re
+from bs4 import BeautifulSoup as bs
 
 def baidu_search(keyword):
     p = {'wd': keyword}
@@ -10,34 +10,18 @@ def baidu_search(keyword):
     html = res.read()
     return html
 
-def getList(regex, text):
-    arr = []
-    res = re.findall(regex, text)
-    if res:
-        for r in res:
-            arr.append(r)
-    return arr
+html = baidu_search('静夜思的作者是谁')
+soup = bs(html)
+# print soup.get_text()
+# print soup.prettify()
+author_list = ['杜甫', '李清照', '王维', '李白']
+author_dict = {}
+for i in author_list:
+    count = len(soup.find_all(text = i))
+    author_dict[i] = count
+    
+print author_dict
+sorted_author_list = sorted(author_dict, key = lambda x : x[1], reverse = True)
+print sorted_author_list
+print '作者是：' + sorted_author_list[0]
 
-def getMatch(regex, text):
-    res = re.findall(regex, text)
-    if res:
-        return res[0]
-    return ""
-
-def clearTag(text):
-    p = re.compile(u'<[^>]+>')
-    retval = p.sub("", text)
-    return retval
-
-html = baidu_search('天下无贼')
-print html
-# content = unicode(html, 'utf-8', 'ignore')
-# 
-# arrList = getList(u"<table.*?class=\"result\".*?>.*?<\/a>", content)
-# for item in arrList:
-#     regex = u"<h3.*?class=\"t\".*?><a.*?href=\"(.*?)\".*?>(.*?)<\/a>"
-#     link = getMatch(regex,item)
-#     url = link[0]
-#     title = clearTag(link[1]).encode('utf8')
-#     print url
-#     print title
