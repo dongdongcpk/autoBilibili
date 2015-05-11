@@ -1,6 +1,7 @@
 #coding=utf-8
 
 from bs4 import BeautifulSoup as bs
+from baiduSearch import Search
 
 def get_questions(soup):
 	return soup.find_all('p', 'qtitle')
@@ -30,5 +31,8 @@ def get_qa_dict():
 
 if __name__ == '__main__':
 	qa_dict = get_qa_dict()
-	print qa_dict['2']['q']
-	print qa_dict['2']['a']
+	s = Search()
+	for k, v in qa_dict.items():
+		# print v['q'], type(v['q'])
+		answer = s.select_key(v['q'].encode('utf-8'), v['a'])
+		print k, answer
